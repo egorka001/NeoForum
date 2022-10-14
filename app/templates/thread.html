@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <title>NeoForum</title>
+  </head>
+  <body>
+    <center><h1>NeoForum</h1></center>
+    <center><p>Quick communication</p></center>
+    <p><a href="/">go main page</a></p>
+    <b>thread #{{thread_id}}</b>
+
+    {% for m in posts.keys()%}
+    <li><b>{{m}}</b> : {{posts[m]}}</li>
+    {% endfor%}
+  
+    <p><a href="/newpost{{thread_id}}">add post</a></p>
+ </body>
+</html>

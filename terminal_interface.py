@@ -1,6 +1,6 @@
 import sys
-sys.path.append('./database/')
-sys.path.append('./interface/')
+sys.path.append('./app/database/')
+sys.path.append('./app/interface/')
 from init_interface import *
 from get_interface import *
 from insert_interface import *
