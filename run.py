@@ -10,12 +10,12 @@ from insert_interface import *
 
 @app.route('/')
 def get_main_page():
-    thread_dct = get_threads(db_name)
+    thread_dct = get_threads()
     return render_template('index.html', threads=thread_dct) 
 
 @app.route('/<thread_id>')
 def show_thread(thread_id):
-    post_dct = get_posts(db_name, int(thread_id))
+    post_dct = get_posts(int(thread_id))
     return render_template('thread.html', thread_id=int(thread_id),
                                                     posts=post_dct)
 
@@ -26,7 +26,7 @@ def add_new_thread():
 @app.route('/addthread', methods=['POST'])
 def addthread():
     if request.method == 'POST':
-        thread_id = insert_new_thread(db_name, request.form['posttext'])
+        thread_id = insert_new_thread(request.form['posttext'])
     if thread_id > 0:
         return render_template('success_thread.html', thread_id=thread_id) 
     else:
@@ -40,18 +40,11 @@ def add_new_post(thread_id):
 def addpost(thread_id):
     if request.method == 'POST':
         thread_id = int(thread_id)
-        post_id = insert_new_post(db_name, thread_id,
-                                           request.form['posttext'])
+        post_id = insert_new_post(thread_id, request.form['posttext'])
     if post_id > 0:
         return render_template('success_post.html', thread_id=thread_id)
     else:
         return render_template('fail.html')
 
 if __name__ == '__main__':
-    with open('./config.txt', 'r') as file:
-        db_name = file.readline()
-        if db_name[-1] == '\n':
-            db_name = db_name[:-1]
-
-    db_init(db_name)
     app.run()

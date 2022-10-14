@@ -1,9 +1,11 @@
 import sys
 sys.path.append('../database/')
 import base_insert
+from config_read import *
 
 
-def insert_new_thread(db_name, post_text):
+def insert_new_thread(post_text):
+    db_name = config_read()
     if not isinstance(post_text, str):
         print('in insert_new_thread: wrong post_text type')
         return -1
@@ -15,7 +17,8 @@ def insert_new_thread(db_name, post_text):
     return out
 
 
-def insert_new_post(db_name, thread_id, post_text):
+def insert_new_post(thread_id, post_text):
+    db_name = config_read()
     if not isinstance(post_text, str):
         print('in insert_new_post: wrong post_text type')
         return -1
