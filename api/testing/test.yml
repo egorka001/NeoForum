@@ -1,0 +1,26 @@
+config:
+  target: 'http://194.87.206.116/api'
+  plugins:
+      expect: {}
+  phases:
+    - duration: 10  
+      arrivalRate: 10
+      rampTo: 10
+      name: 'easy and fast'
+    - duration: 60  
+      arrivalRate: 100 
+      rampTo: 1000 
+      name: 'middle and longer'
+    - duration: 120  
+      arrivalRate: 500 
+      rampTo: 2000
+      name: 'hard and long'
+scenarios:
+  - flow:
+      - get:
+          url: '/themes'
+          expect: 
+            statusCode: 200
+            contentType: json 
+            equals: 
+              - respMessage: '{"themes" : ["sport", "motosport", "programming", "offtop"]}'
