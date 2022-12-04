@@ -9,7 +9,7 @@ config:
       name: 'easy and fast'
     - duration: 120  
       arrivalRate: 100 
-      rampTo: 000 
+      rampTo: 1000 
       name: 'middle and longer'
     - duration: 240  
       arrivalRate: 500 
