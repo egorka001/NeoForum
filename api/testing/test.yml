@@ -3,24 +3,28 @@ config:
   plugins:
       expect: {}
   phases:
-    - duration: 10  
+    - duration: 60  
       arrivalRate: 10
       rampTo: 10
       name: 'easy and fast'
-    - duration: 60  
-      arrivalRate: 100 
-      rampTo: 1000 
-      name: 'middle and longer'
     - duration: 120  
+      arrivalRate: 100 
+      rampTo: 000 
+      name: 'middle and longer'
+    - duration: 240  
       arrivalRate: 500 
       rampTo: 2000
       name: 'hard and long'
+    - duration: 120   
+      arrivalRate: 500 
+      rampTo: 1000
+      name: 'easier and shorter'
 scenarios:
   - flow:
       - get:
           url: '/themes'
           expect: 
             statusCode: 200
-            contentType: json 
+            contentType: application/json
             equals: 
               - respMessage: '{"themes" : ["sport", "motosport", "programming", "offtop"]}'
