@@ -32,20 +32,20 @@ def send_themes_api():
     if request.method == 'GET':
         return jsonify(themes_sample)
 
-@app.route('/api/threads_sport', methods=['GET'])
-@app.route('/api/threads_motosport', methods=['GET'])
-@app.route('/api/threads_programming', methods=['GET'])
-@app.route('/api/threads_offtop', methods=['GET'])
+@app.route('/api/themes/sport', methods=['GET'])
+@app.route('/api/themes/motosport', methods=['GET'])
+@app.route('/api/themes/programming', methods=['GET'])
+@app.route('/api/themes/offtop', methods=['GET'])
 def send_threads_api():
     """send threads dct from forum"""
     if request.method == 'GET':
         return jsonify(threads_sample)
 
-@app.route('/api/thread_1', methods=['GET'])
-@app.route('/api/thread_2', methods=['GET'])
-@app.route('/api/thread_3', methods=['GET'])
-@app.route('/api/thread_4', methods=['GET'])
-@app.route('/api/thread_5', methods=['GET'])
+@app.route('/api/thread/1', methods=['GET'])
+@app.route('/api/thread/2', methods=['GET'])
+@app.route('/api/thread/3', methods=['GET'])
+@app.route('/api/thread/4', methods=['GET'])
+@app.route('/api/thread/5', methods=['GET'])
 def send_thread_api():
     """send current thread"""
     if request.method == 'GET':
