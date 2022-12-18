@@ -3,7 +3,7 @@ import sqlite3 as sql
 def get_themes(db_name):
     with sql.connect(db_name) as connect:
         curr = connect.cursor()
-        curr.execute(f'SELECT DISTINCT theme FROM threads')
+        curr.execute(f'SELECT DISTINCT theme FROM threads;')
         themes = curr.fetchall()
     out = []
     for i in themes:
@@ -23,8 +23,7 @@ def get_threads(db_name, theme):
                                     WHERE post_id = {p_id};""")
             text = curr.fetchone()
             info[t_id] = text[0]
-    info = {"thread_title" : info}
-    return info
+    return {"threads" : info}
 
 
 def get_posts(db_name, thread_id):
