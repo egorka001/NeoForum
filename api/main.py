@@ -1,11 +1,12 @@
-threads_sample = """ {"threads" : [{"id": "1", "creator_name" : "Егор", "thread_title" : "Какой крутой сайт", "thread_body" : "Вообще очень рад, что всё так получается!", "pic" : "base64 pic code"},{"id": "2", "creator_name" : "Ася", "thread_title" : "Реально, очень крутой сайт", "thread_body" : "Вот бы такие почаще делали", "pic" : "base64 pic code"},{"id": "3", "creator_name" : "Лена", "thread_title" : "Продам гараж", "thread_body" : "Очень хороший гараж!", "pic" : "base64 pic code"},{"id": "4", "creator_name" : "Антошка", "thread_title" : "Очень хочу картошки", "thread_body" : "Кто со мной копать картошку", "pic" : "base64 pic code"},{"id": "5", "creator_name" : "Кирилл", "thread_title" : "Помогите с ассемблером", "thread_body" : "Запутался в мнемониках опкодов, очень страшно выходит", "pic" : "base64 pic code"},{"id": "6", "creator_name" : "Паша", "thread_title" : "Скоро этот сайт ляжет", "thread_body" : "И ничего с этим поделать никто не сможет", "pic" : "base64 pic code"}]}"""
-
-themes_sample = """{"themes" : ["sport", "motosport", "programming", "offtop"]}"""
-
-thread_sample = """{"creator_name" : "Максим", "thread_titile":"Лечу в сочи", "posts" : [{"post_id" : "0", "date" : "01.12.2022", "time" : "13:41", "post_creator" : "Максим", "post_text" : "Что лучше с собой взять на отдых?", "post_pic" : "base64 pic code"},{"post_id" : "1", "date" : "01.12.2022", "time" : "13:42", "post_creator" : "Егор", "post_text" : "Средство от загара", "post_pic" : "base64 pic code"},{"post_id" : "2", "date" : "01.12.2022", "time" : "13:43", "post_creator" : "Антон", "post_text" : "Лучше ничего с собой не брать, так на легке поехать", "post_pic" : ""},{"post_id" : "3", "date" : "01.12.2022", "time" : "13:44", "post_creator" : "Лена", "post_text" : "Может у меня всё таки купят гараж?", "post_pic" : "base64 pic code"}]}"""
-
 from flask import Flask, render_template, request, send_from_directory 
 from flask import jsonify
+
+import sys
+sys.path.append('../database/')
+sys.path.append('../interface/')
+from init_interface import *
+from get_interface import *
+from insert_interface import *
 
 app = Flask(__name__)
 
@@ -30,26 +31,37 @@ def send_api():
 def send_themes_api():
     """send all themes from forum"""
     if request.method == 'GET':
-        return jsonify(themes_sample)
+        return jsonify(get_themes())
 
-@app.route('/api/themes/sport', methods=['GET'])
-@app.route('/api/themes/motosport', methods=['GET'])
-@app.route('/api/themes/programming', methods=['GET'])
-@app.route('/api/themes/offtop', methods=['GET'])
-def send_threads_api():
+@app.route('/api/themes/<theme_name>', methods=['GET'])
+def send_threads_api(theme_name):
     """send threads dct from forum"""
     if request.method == 'GET':
-        return jsonify(threads_sample)
+        return jsonify(get_threads(theme_name))
 
-@app.route('/api/thread/1', methods=['GET'])
-@app.route('/api/thread/2', methods=['GET'])
-@app.route('/api/thread/3', methods=['GET'])
-@app.route('/api/thread/4', methods=['GET'])
-@app.route('/api/thread/5', methods=['GET'])
-def send_thread_api():
+@app.route('/api/thread/<t_id>', methods=['GET'])
+def send_thread_api(t_id):
     """send current thread"""
     if request.method == 'GET':
-        return jsonify(thread_sample) 
+        return jsonify(get_posts(int(t_id))) 
+
+@app.route('/api/new_thread')
+def add_new_thread():
+    theme = request.args.get('theme')
+    post_text = request.args.get('post_text')
+    if(theme != None and post_text != None):
+        insert_new_thread(post_text, theme)
+        return "1" 
+    return "0"
+
+@app.route('/api/new_post')
+def add_new_post():
+    t_id = request.args.get('t_id')
+    post_text = request.args.get('post_text')
+    if(t_id != None and post_text != None):
+        insert_new_post(int(t_id), post_text)
+        return "1" 
+    return "0"
 
 if __name__ == '__main__':
     app.run()
