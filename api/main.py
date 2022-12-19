@@ -70,6 +70,7 @@ def add_new_thread():
         if(check_valid(get_path(), token, user)):
             insert_new_thread(get_path(), post_text, theme)
             return "1" 
+    print('no new thread')
     return "0"
 
 @app.route('/api/new_post', methods=['POST'])
@@ -84,6 +85,7 @@ def add_new_post():
         if(check_valid(get_path(), token, user)):
             insert_new_post(get_path(), int(t_id), post_text)
             return "1" 
+    print('no new post')
     return "0"
 
 @app.route('/api/auth', methods=['POST'])
@@ -102,7 +104,11 @@ def mega_auth():
         response = requests.get('https://api.github.com/user',
                             headers={"Authorization" : "Bearer " + token})
         login = json.loads(response.text)
-        update_base(get_path(), token, login)
+        try:
+            only_login = login['login']
+        except:
+            return "0"
+        update_base(get_path(), token, only_login)
         return jsonify({'token': token, 'login': login})
     return "0"
 
