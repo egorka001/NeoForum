@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, send_from_directory 
 from flask import jsonify
-from flask_cors import cross_origin
+from flask_cors import cross_origin, CORS
 
 import sys
+import json
+import requests
 sys.path.append('../database/')
 sys.path.append('../interface/')
 from init_interface import *
@@ -11,6 +13,8 @@ from insert_interface import *
 from config import *
 
 app = Flask(__name__)
+CORS(app)
+
 
 @app.route('/favicon.ico', methods=['GET'])
 @cross_origin()
@@ -53,30 +57,48 @@ def send_thread_api(t_id):
     if request.method == 'GET':
         return jsonify(get_posts(get_path(),int(t_id))) 
 
-@app.route('/api/new_thread')
+@app.route('/api/new_thread', methods=['POST'])
 @cross_origin()
 def add_new_thread():
-    theme = request.args.get('theme')
-    post_text = request.args.get('post_text')
+    data = request.json
+    theme = data['theme']
+    post_text = data['post_text']
     if(theme != None and post_text != None):
         insert_new_thread(get_path(), post_text, theme)
         return "1" 
     return "0"
 
-@app.route('/api/new_post')
+@app.route('/api/new_post', methods=['POST'])
 @cross_origin()
 def add_new_post():
-    t_id = request.args.get('t_id')
-    post_text = request.args.get('post_text')
+    data = request.json
+    t_id = data['t_id']
+    post_text = data['post_text']
     if(t_id != None and post_text != None):
         insert_new_post(get_path(), int(t_id), post_text)
         return "1" 
     return "0"
 
+@app.route('/api/auth', methods=['POST'])
+@cross_origin()
+def mega_auth():
+    data = request.json
+    code = data['code']
+    if(code != None):
+        response = requests.post(
+                    'https://github.com/login/oauth/access_token',
+                    data = {'code': code, 
+                            'client_id': '89fdb6f152e43d0652a8', 
+            'client_secret': '2396e06c97d314b0bd5cedf474cef158347d5834'})
+        out = response.text
+        token = out[out.find('=') + 1:out.find('&')]
+        response = requests.get('https://api.github.com/user',
+                            headers={"Authorization" : "Bearer " + token})
+        login = json.loads(response.text)
+        """add data to database"""
+        return jsonify({'token': token, 'login': login})
+    return "0"
+
 if __name__ == '__main__':
     app.run()
-
-
-
-
 
