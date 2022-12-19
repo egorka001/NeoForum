@@ -10,6 +10,7 @@ sys.path.append('../interface/')
 from init_interface import *
 from get_interface import *
 from insert_interface import *
+from auth_interface import *
 from config import *
 
 app = Flask(__name__)
@@ -63,9 +64,12 @@ def add_new_thread():
     data = request.json
     theme = data['theme']
     post_text = data['post_text']
-    if(theme != None and post_text != None):
-        insert_new_thread(get_path(), post_text, theme)
-        return "1" 
+    token = data['token']
+    user = data['user']
+    if(theme != None or post_text != None):
+        if(check_valid(get_path(), token, user)):
+            insert_new_thread(get_path(), post_text, theme)
+            return "1" 
     return "0"
 
 @app.route('/api/new_post', methods=['POST'])
@@ -74,9 +78,12 @@ def add_new_post():
     data = request.json
     t_id = data['t_id']
     post_text = data['post_text']
-    if(t_id != None and post_text != None):
-        insert_new_post(get_path(), int(t_id), post_text)
-        return "1" 
+    token = data['token']
+    user = data['user']
+    if(t_id != None or post_text != None):
+        if(check_valid(get_path(), token, user)):
+            insert_new_post(get_path(), int(t_id), post_text)
+            return "1" 
     return "0"
 
 @app.route('/api/auth', methods=['POST'])
@@ -95,7 +102,7 @@ def mega_auth():
         response = requests.get('https://api.github.com/user',
                             headers={"Authorization" : "Bearer " + token})
         login = json.loads(response.text)
-        """add data to database"""
+        update_base(get_path(), token, login)
         return jsonify({'token': token, 'login': login})
     return "0"
 

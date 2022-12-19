@@ -27,6 +27,14 @@ tbl_count = """
     );
 """
 
+tbl_user = """
+    CREATE TABLE IF NOT EXISTS user
+    (
+        login TEXT PRIMARY KEY,
+        token TEXT
+    );
+"""
+
 count_init = 'INSERT INTO count (id,curr_thread,curr_post) VALUES (0,0,0);'
 
 
@@ -36,6 +44,7 @@ def base_init(db_name):
         curr.execute(tbl_threads)
         curr.execute(tbl_posts)
         curr.execute(tbl_count)
+        curr.execute(tbl_user)
         try:
             curr.execute(count_init)
         except sql.IntegrityError:
