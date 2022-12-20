@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<link rel=stylesheet type=text/css href="../static/style.css">
+  <head>
+    <meta charset="utf-8">
+    <title>NeoForum</title>
+  </head>
+  <body>
+    <center><h1><a href="/">NeoForum</a></h1></center>
+    <h2>Страница с описанием API</h2>
+    <a href="themes">/api/themes/</a> - возвращает строку в формате JSON: {"themes" : ["sport", "motosport", "programming", "offtop"]} <br><br>
+    /api/threads_THEMENAME/ - возвращает строку в формате JSON: {"threads" : [{"id" : "1", "creator_name" : "sample name", "thread_title" : "sample text", "thread_body" : "sample text", "pic" : "base64 pic code"}, {}, ...]}, содержит все треды на тему THEMENAME <br><br>
+    Примеры: <br>
+    <a href="themes/sport">/api/themes/sport/</a> <br>
+    <a href="themes/motosport">/api/themes/motosport/</a> <br>
+    <a href="themes/programming">/api/themes/programming/</a> <br>
+    <a href="themes/offtop">/api/themes/offtop/</a> <br> <br>
+    /api/thread/THREADID/ - возвращает строку в формате JSON: {"creator_name" : "sample name", "thread_titile":"sample text", "posts" : [{"post_id" : "0", "date" : "01.12.2022", "time" : "13:41", "post_creator" : "sampla name", "post_text" : "sample text", "post_pic" : "base64 pic code"}, {}, ...]}, содержит информацию о треде THREADID и о постах в треде THREADID <br><br>
+     Примеры: <br>
+    <a href="thread/1">/api/threads/1/</a> <br>
+    <a href="thread/2">/api/threads/2/</a> <br>
+    <a href="thread/3">/api/threads/3/</a> <br>
+    <a href="thread/4">/api/threads/4/</a> <br>
+  </body>
+</html>
