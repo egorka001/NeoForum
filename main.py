@@ -40,7 +40,7 @@ def send_thread_api(t_id):
 
 @app.route('/api/new_thread', methods=['POST'])
 @cross_origin()
-def add_new_thread():
+def add_new_thread_hand():
     data = request.json
     login = data["login"]
     token = data["token"]
@@ -52,7 +52,7 @@ def add_new_thread():
 
 @app.route('/api/new_post', methods=['POST'])
 @cross_origin()
-def add_new_post():
+def add_new_post_hand():
     data = request.json
     login = data["login"]
     token = data["token"]
