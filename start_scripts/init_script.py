@@ -1,7 +1,4 @@
 import sqlite3 as sql
-import sys
-sys.path.append('./data')
-from interface import * 
 
 global_id_tbl = """   
     CREATE TABLE IF NOT EXISTS global_id 
@@ -71,4 +68,10 @@ if __name__ == "__main__":
                   'Мультфильмы', 'Книги', 'It', 'Игры', 'Оффтоп']
 
     for theme in theme_list:
-        add_new_theme(theme)
+        with sql.connect('base.db') as conn:
+            curr = conn.cursor()
+            curr.execute(f"""INSERT INTO themes (theme_name) 
+                             VALUES ("{theme}");""")
+            conn.commit()
+
+
