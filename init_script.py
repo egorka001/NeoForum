@@ -1,4 +1,7 @@
 import sqlite3 as sql
+import sys
+sys.path.append('./data')
+from interface import * 
 
 global_id_tbl = """   
     CREATE TABLE IF NOT EXISTS global_id 
@@ -13,34 +16,38 @@ global_id_init = "INSERT INTO global_id (id,post,thread) VALUES (0,0,0);"
 themes_tbl = """
     CREATE TABLE IF NOT EXISTS themes 
     (
-        id INTEGER PRIMARY KEY,
-        theme_name TEXT
+        theme_name TEXT PRIMARY KEY
     );"""
 
 threads_tbl = """
     CREATE TABLE IF NOT EXISTS threads
     (
-        id INTEGER PIRMARY KEY,
-        theme_id INTEGER,
+        id INTEGER PRIMARY KEY,
+        theme TEXT,
         first_post_id INTEGER,
-        creator_id INTEGER,
+        login TEXT,
         post_count INTEGER,
-        last_update DATETIME,
+        last_update TEXT,
         status INTEGER
     );"""
 
 posts_tbl = """
     CREATE TABLE IF NOT EXISTS posts
     (
-        id INTEGER PIRMARY KEY,
+        id INTEGER PRIMARY KEY,
         thread_id INTEGER,
-        user_id INTEGER,
-        post_body TEXT
-        post_pic BLOB,
-        post_time DATETIME
+        login TEXT,
+        post_body TEXT,
+        post_time TEXT 
     );"""
 
-#users_tbl = """ """
+users_tbl = """ 
+    CREATE TABLE IF NOT EXISTS users
+    (
+        login TEXT PRIMARY KEY,
+        token TEXT,
+        status INTEGER
+    );"""
 
 def base_init(db_name):
     with sql.connect(db_name) as conn:
@@ -49,6 +56,7 @@ def base_init(db_name):
         curr.execute(themes_tbl)
         curr.execute(threads_tbl)
         curr.execute(posts_tbl)
+        curr.execute(users_tbl)
         try:
             curr.execute(global_id_init)
         except:
@@ -57,4 +65,10 @@ def base_init(db_name):
     return 1
 
 if __name__ == "__main__":
-    base_init("test.db")
+    base_init('base.db')
+
+    theme_list = ['Спорт', 'Музыка', 'Кино', 'Велосипеды',
+                  'Мультфильмы', 'Книги', 'It', 'Игры', 'Оффтоп']
+
+    for theme in theme_list:
+        add_new_theme(theme)

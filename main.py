@@ -1,93 +1,68 @@
-from flask import Flask, render_template, request, send_from_directory 
-from flask import jsonify
+from flask import Flask, request, jsonify 
 from flask_cors import cross_origin, CORS
-
-import sys
 import json
 import requests
-sys.path.append('../database/')
-sys.path.append('../interface/')
-from init_interface import *
-from get_interface import *
-from insert_interface import *
-from auth_interface import *
-from config import *
+
+import sys
+sys.path.append('./data')
+from db_scripts import *
+from interface import *
 
 app = Flask(__name__)
 CORS(app)
-
-
-@app.route('/favicon.ico', methods=['GET'])
-@cross_origin()
-def favicon():
-    if request.method == 'GET':
-        return send_from_directory('static', 'favicon.ico') 
-
-@app.route('/', methods=['GET'])
-@cross_origin()
-def send_base():
-    """send base index.html page"""
-    if request.method == 'GET':
-        return render_template('index.html')
-
-@app.route('/api/', methods=['GET'])
-@cross_origin()
-def send_api():
-    """send info page about api, api.html"""
-    if request.method == 'GET':
-        return render_template('api.html')
 
 @app.route('/api/themes/', methods=['GET'])
 @cross_origin()
 def send_themes_api():
     """send all themes from forum"""
     if request.method == 'GET':
-        return jsonify(get_themes(get_path()))
+        out = get_themes_list()
+        out = {"themes": out}
+        return jsonify(out)
 
 @app.route('/api/themes/<theme_name>', methods=['GET'])
 @cross_origin()
 def send_threads_api(theme_name):
     """send threads dct from forum"""
     if request.method == 'GET':
-        return jsonify(get_threads(get_path(), theme_name))
+        out = get_threads_by_theme(theme_name)
+        out = {"threads": out, "theme": theme_name}
+        return jsonify(out)
 
 @app.route('/api/thread/<t_id>', methods=['GET'])
 @cross_origin()
 def send_thread_api(t_id):
     """send current thread"""
     if request.method == 'GET':
-        return jsonify(get_posts(get_path(),int(t_id))) 
+        out = get_posts_by_thread_id(t_id)
+        out = {"posts": out, "thread_id": t_id}
+        return jsonify(out) 
 
 @app.route('/api/new_thread', methods=['POST'])
 @cross_origin()
 def add_new_thread():
     data = request.json
-    theme = data['theme']
-    post_text = data['post_text']
-    token = data['token']
-    user = data['user']
-    if(theme != None or post_text != None):
-        if(check_valid(get_path(), token, user)):
-            insert_new_thread(get_path(), post_text, theme)
-            return "1" 
-    print('no new thread')
-    return "0"
+    login = data["login"]
+    token = data["token"]
+    theme = data["theme"]
+    post_body = data["post_body"]
+    if(add_new_thread(login, token, theme, post_body)):
+        return "OK" 
+    return "DONT OK"
 
 @app.route('/api/new_post', methods=['POST'])
 @cross_origin()
 def add_new_post():
     data = request.json
-    t_id = data['t_id']
-    post_text = data['post_text']
-    token = data['token']
-    user = data['user']
-    if(t_id != None or post_text != None):
-        if(check_valid(get_path(), token, user)):
-            insert_new_post(get_path(), int(t_id), post_text)
-            return "1" 
-    print('no new post')
-    return "0"
+    login = data["login"]
+    token = data["token"]
+    thread_id = data["thread_id"]
+    post_body = data["post_body"]
+    if(add_new_post(login, token, thread_id, post_body)):
+        return "OK" 
+    return "DONT OK"
 
+"""
 @app.route('/api/auth', methods=['POST'])
 @cross_origin()
 def mega_auth():
@@ -111,6 +86,7 @@ def mega_auth():
         update_base(get_path(), token, only_login)
         return jsonify({'token': token, 'login': login})
     return "0"
+"""
 
 if __name__ == '__main__':
     app.run()
