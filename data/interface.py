@@ -1,5 +1,5 @@
 from datetime import datetime
-from config import get_path
+from config import get_path, max_post, thread_per_page
 from db_scripts import *
 from datetime import datetime
 
@@ -41,7 +41,7 @@ def get_threads_by_theme(theme):
                     datetime.strptime(x['time'], '%Y-%m-%d %H:%M:%S.%f'), 
                     reverse=True)
     out = active + passive 
-    return out[:30]
+    return out[:thread_per_page()]
 
 def get_posts_by_thread_id(thread_id):
     from_db = select_posts_by_thread_id(get_path(), thread_id)
@@ -61,7 +61,7 @@ def add_new_post(login, token, thread_id, post_body):
         return 0
     if(thread_id < 0 and get_count['thread_id'] < thread_id):
         return 0
-    if(len(post_body) >= 10000):
+    if(len(post_body) >= max_post()):
         return 0
     post_time = my_time()
     post_new_post(get_path(), thread_id, login, post_body, post_time)
@@ -73,7 +73,7 @@ def add_new_thread(login, token, theme, post_body):
         return 0 
     if(not check_themes(theme)):
         return 0
-    if(len(post_body) >= 10000):
+    if(len(post_body) >= max_post()):
         return 0
     post_time = my_time()
     post_new_thread(get_path(), login, theme, post_body, post_time)

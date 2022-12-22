@@ -72,8 +72,8 @@ def mega_auth():
         response = requests.post(
                     'https://github.com/login/oauth/access_token',
                     data = {'code': code, 
-                            'client_id': token.get_client_id(), 
-                            'client_secret': token.get_client_secret})
+                            'client_id': tokens.get_client_id(), 
+                            'client_secret': tokens.get_client_secret()})
         out = response.text
         token = out[out.find('=') + 1:out.find('&')]
         response = requests.get('https://api.github.com/user',
@@ -84,7 +84,7 @@ def mega_auth():
         except:
             return "DONT OK" 
         update_base(only_login, token)
-        return jsonify({'token': token, 'login': only_login})
+        return jsonify({'token': token, 'login': login})
     return "DONT OK"
 
 if __name__ == '__main__':

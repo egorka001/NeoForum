@@ -1,4 +1,5 @@
 import sqlite3 as sql
+from config import bump_limit
 
 def get_count(db_name):
     """get current count status"""
@@ -73,7 +74,7 @@ def update_thread(db_name, thread_id, post_time):
         curr.execute(f"""SELECT post_count FROM threads
                          WHERE id = {thread_id}""")
         post_count = curr.fetchone()
-        if(post_count[0] > 10):
+        if(post_count[0] > bump_limit()):
             curr.execute(f"""UPDATE threads SET status = 0
                             WHERE id = {thread_id};""")
         connect.commit()
@@ -127,7 +128,7 @@ def new_token_by_login(db_name, login, token):
                      VALUES("{login}", "{token}")""")
         connect.commit()
 
-def base_check_valid(db_name, token, login):
+def base_check_valid(db_name, login, token):
     with sql.connect(db_name) as connect:
         curr = connect.cursor()
         curr.execute(f'SELECT token FROM users WHERE login = "{login}"')

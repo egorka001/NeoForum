@@ -1,2 +1,11 @@
 def get_path():
-    return './base.db'
+    return '/var/www/NeoForum/base.db'
+
+def bump_limit():
+    return 10
+
+def max_post():
+    return 1000
+
+def thread_per_page():
+    return 12
