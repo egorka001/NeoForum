@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import cross_origin, CORS
 import json
 import requests
+import tokens
 
 import sys
 sys.path.append('./data')
@@ -56,13 +57,12 @@ def add_new_post_hand():
     data = request.json
     login = data["login"]
     token = data["token"]
-    thread_id = data["thread_id"]
+    thread_id = int(data["thread_id"])
     post_body = data["post_body"]
     if(add_new_post(login, token, thread_id, post_body)):
         return "OK" 
     return "DONT OK"
 
-"""
 @app.route('/api/auth', methods=['POST'])
 @cross_origin()
 def mega_auth():
@@ -72,8 +72,8 @@ def mega_auth():
         response = requests.post(
                     'https://github.com/login/oauth/access_token',
                     data = {'code': code, 
-                            'client_id': '89fdb6f152e43d0652a8', 
-            'client_secret': '2396e06c97d314b0bd5cedf474cef158347d5834'})
+                            'client_id': token.get_client_id(), 
+                            'client_secret': token.get_client_secret})
         out = response.text
         token = out[out.find('=') + 1:out.find('&')]
         response = requests.get('https://api.github.com/user',
@@ -82,11 +82,10 @@ def mega_auth():
         try:
             only_login = login['login']
         except:
-            return "0"
-        update_base(get_path(), token, only_login)
-        return jsonify({'token': token, 'login': login})
-    return "0"
-"""
+            return "DONT OK" 
+        update_base(only_login, token)
+        return jsonify({'token': token, 'login': only_login})
+    return "DONT OK"
 
 if __name__ == '__main__':
     app.run()

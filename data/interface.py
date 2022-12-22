@@ -3,9 +3,6 @@ from config import get_path
 from db_scripts import *
 from datetime import datetime
 
-def check_auth(login, token):
-    return 1
-
 def my_time():
     return str(datetime.now())
 
@@ -80,3 +77,9 @@ def add_new_thread(login, token, theme, post_body):
         return 0
     post_time = my_time()
     post_new_thread(get_path(), login, theme, post_body, post_time)
+
+def update_base(login, token):
+    new_token_by_login(get_path(), login, token)
+
+def check_auth(login, token):
+    return base_check_valid(get_path(), login, token)

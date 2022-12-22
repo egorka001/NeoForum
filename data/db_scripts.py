@@ -115,3 +115,24 @@ def select_threads_by_theme(db_name, theme):
         out = curr.fetchall()
     return out
 
+def new_token_by_login(db_name, login, token):
+    with sql.connect(db_name) as connect:
+        curr = connect.cursor()
+        curr.execute(f"""SELECT login, token FROM users
+                         WHERE login = "{login}";""")
+        from_db = curr.fetchone()
+        if(from_db != None):
+            curr.execute(f"""DELETE FROM users WHERE login = "{login}";""")
+        curr.execute(f"""INSERT INTO users (login, token)
+                     VALUES("{login}", "{token}")""")
+        connect.commit()
+
+def base_check_valid(db_name, token, login):
+    with sql.connect(db_name) as connect:
+        curr = connect.cursor()
+        curr.execute(f'SELECT token FROM users WHERE login = "{login}"')
+        from_db = curr.fetchone()
+        if(from_db != None):
+            if(from_db[0] == token):
+                return True
+        return False
