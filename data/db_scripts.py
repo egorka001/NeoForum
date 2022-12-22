@@ -1,5 +1,5 @@
 import sqlite3 as sql
-from config import bump_limit
+from config import bump_limit, root_name
 
 def get_count(db_name):
     """get current count status"""
@@ -124,9 +124,14 @@ def new_token_by_login(db_name, login, token):
         from_db = curr.fetchone()
         if(from_db != None):
             curr.execute(f"""DELETE FROM users WHERE login = "{login}";""")
-        curr.execute(f"""INSERT INTO users (login, token)
-                     VALUES("{login}", "{token}")""")
+        if(login == root_name()):
+            status = 1
+        else:
+            status = 0
+        curr.execute(f"""INSERT INTO users (login, token, status)
+                         VALUES("{login}", "{token}", {status});""")
         connect.commit()
+        return status
 
 def base_check_valid(db_name, login, token):
     with sql.connect(db_name) as connect:
@@ -137,3 +142,38 @@ def base_check_valid(db_name, login, token):
             if(from_db[0] == token):
                 return True
         return False
+
+def base_admin_valid(db_name, login, token):
+    with sql.connect(db_name) as connect:
+        curr = connect.cursor()
+        curr.execute(f'SELECT token, status FROM users WHERE login = "{login}"')
+        from_db = curr.fetchone()
+        if(from_db != None):
+            if(from_db[0] == token and from_db[1] == 1):
+                return True
+        return False
+
+def delete_rec_theme(db_name, theme):
+    with sql.connect(db_name) as connect:
+        curr = connect.cursor()
+        curr.execute(f'DELETE FROM themes WHERE theme_name = "{theme}"')
+        curr.execute(f'SELECT id FROM threads WHERE theme = "{theme}"')
+        t_id = curr.fetchall()
+        curr.execute(f'DELETE FROM threads WHERE theme = "{theme}"')
+        for i in t_id:
+            curr.execute(f'DELETE FROM posts WHERE thread_id = {t_id[0]}')
+        curr.commit()
+
+def delete_rec_thread(db_name, thread_id):
+    with sql.connect(db_name) as connect:
+        curr = connect.cursor()
+        curr.execute(f'DELETE FROM threads WHERE id = {thread_id}')
+        curr.execute(f'DELETE FROM posts WHERE thread_id = {thread_id}')
+        curr.commit()
+
+def delete_rec_post(db_name, post_id):
+    with sql.connect(db_name) as connect:
+        curr = connect.cursor()
+        curr.execute(f"""UPDATE posts SET post_body = "deleted text" 
+                         WHERE post_id = {post_id}""")
+        curr.commit()

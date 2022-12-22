@@ -11,8 +11,14 @@ def check_themes(theme):
         return 1
     return 0
 
-def add_new_theme(theme):
-    post_theme(get_path(), theme)
+def add_new_theme(login, token, theme):
+    #if(not check_admin(login, token)):
+    #    return 0 
+    try:
+        post_theme(get_path(), theme)
+    except:
+        pass
+    return 1
 
 def get_themes_list():
     return get_themes(get_path())
@@ -79,7 +85,25 @@ def add_new_thread(login, token, theme, post_body):
     post_new_thread(get_path(), login, theme, post_body, post_time)
 
 def update_base(login, token):
-    new_token_by_login(get_path(), login, token)
+    return new_token_by_login(get_path(), login, token)
 
 def check_auth(login, token):
     return base_check_valid(get_path(), login, token)
+
+def check_admin(login, token):
+    return base_admin_valid(get_path(), login, token)
+
+def delete_theme(login, token, theme):
+    if(not check_admin(login, token)):
+        return 0 
+    delete_rec_theme(get_path(), theme)
+
+def delete_thread(login, token, thread_id):
+    if(not check_admin(login, token)):
+        return 0 
+    delete_rec_thread(get_path(), thread_id)
+
+def delete_post(login, token, post_id):
+    if(not check_admin(login, token)):
+        return 0 
+    delete_rec_post(get_path(), post_id)

@@ -9,3 +9,6 @@ def max_post():
 
 def thread_per_page():
     return 12
+
+def root_name():
+    return 'egorka001'

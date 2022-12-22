@@ -63,6 +63,50 @@ def add_new_post_hand():
         return "OK" 
     return "DONT OK"
 
+@app.route('/api/new_post', methods=['POST'])
+@cross_origin()
+def add_new_theme_hand():
+    data = request.json
+    login = data["login"]
+    token = data["token"]
+    theme = data["theme"]
+    if(add_new_theme(login, token, theme)):
+        return "OK" 
+    return "DONT OK"
+
+@app.route('/api/del_theme', methods=['DELETE'])
+@cross_origin()
+def delete_theme_hand():
+    data = request.json
+    login = data["login"]
+    token = data["token"]
+    theme = data["theme"]
+    if(delete_theme(login, token, theme)):
+        return "OK" 
+    return "DONT OK"
+
+@app.route('/api/del_thread', methods=['DELETE'])
+@cross_origin()
+def delete_thread_hand():
+    data = request.json
+    login = data["login"]
+    token = data["token"]
+    thread_id = int(data["thread_id"])
+    if(delete_thread(login, token, thread_id)):
+        return "OK" 
+    return "DONT OK"
+
+@app.route('/api/del_post', methods=['DELETE'])
+@cross_origin()
+def delete_post_hand():
+    data = request.json
+    login = data["login"]
+    token = data["token"]
+    post_id = int(data["post_id"])
+    if(delete_post(login, token, post_id)):
+        return "OK" 
+    return "DONT OK"
+
 @app.route('/api/auth', methods=['POST'])
 @cross_origin()
 def mega_auth():
@@ -83,8 +127,12 @@ def mega_auth():
             only_login = login['login']
         except:
             return "DONT OK" 
-        update_base(only_login, token)
-        return jsonify({'token': token, 'login': login})
+        status = update_base(only_login, token)
+        status_text = ''
+        if(status):
+            status_text = 'admin'
+        return jsonify({'token': token, 'login': login, 'status': status,
+                        'status_text' : status_text})
     return "DONT OK"
 
 if __name__ == '__main__':
